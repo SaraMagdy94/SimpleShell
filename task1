@@ -1,0 +1,46 @@
+c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
+void execute_command(char *command) {
+    pid_t pid = fork();
+    if (pid == -1) {
+        perror("fork");
+        exit(EXIT_FAILURE);
+    }
+    if (pid == 0) {
+        if (execlp(command, command, (char *)NULL) == -1) {
+            perror("execlp");
+            exit(EXIT_FAILURE);
+        }
+    } else {
+        int status;
+        if (waitpid(pid, &status, 0) == -1) {
+            perror("waitpid");
+            exit(EXIT_FAILURE);
+        }
+    }
+}
+
+int main() {
+    char command[1024];
+    while (1) {
+        printf("> ");
+        if (fgets(command, sizeof(command), stdin) == NULL) {
+            if (feof(stdin)) {
+                printf("\n");
+                break;
+            } else {
+                perror("fgets");
+                exit(EXIT_FAILURE);
+            }
+        }
+        command[strcspn(command, "\n")] = '\0';
+        execute_command(command);
+    }
+    return 0;
+}
