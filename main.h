@@ -1,4 +1,4 @@
-#ifndef MAIN_H
+iifndef MAIN_H
 #define MAIN_H
 
 #include <stdio.h>
@@ -15,5 +15,6 @@ extern char **environ;
 void token(char *r, char *a[]);
 void execute(char *a[]);
 void execute_commands(char *commands[]);
-
+void remove_comment(char *buffer);
+void execute_commands_interactive(char *commands[])
 #endif /* MAIN_H */
