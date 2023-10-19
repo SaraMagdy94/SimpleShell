@@ -8,7 +8,6 @@ void token(char *r, char *a[])
 {
 int i = 0;
 char *t = strtok(r, " \t\n;");
-
 while (t != NULL && i < BUFFER_SIZE)
 {
 a[i++] = t;
@@ -23,7 +22,6 @@ a[i] = NULL;
 void execute(char *a[])
 {
 pid_t p = fork();
-
 if (p == -1)
 {
 perror("fork");
@@ -52,7 +50,6 @@ while (commands[i] != NULL)
 {
 char *args[BUFFER_SIZE];
 token(commands[i], args);
-
 if (args[0] != NULL)
 {
 execute(args);
@@ -68,16 +65,13 @@ void execute_commands_interactive(char *commands[])
 {
 int i = 0;
 int result = 0;
-
 while (commands[i] != NULL)
 {
 char *args[BUFFER_SIZE];
 token(commands[i], args);
-
 if (args[0] != NULL)
 {
 pid_t p = fork();
-
 if (p == -1)
 {
 perror("fork");
@@ -93,14 +87,12 @@ else
 {
 int s;
 wait(&s);
-
 if (WIFEXITED(s))
 {
 result = WEXITSTATUS(s);
 }
 }
 }
-
 if (strstr(commands[i], "&&") && result != 0)
 {
 break;
@@ -109,7 +101,18 @@ else if (strstr(commands[i], "||") && result == 0)
 {
 break;
 }
-
 i++;
+}
+}
+/**
+ * remove_comment - Removes comments from a string.
+ * @buffer: A pointer to the string to remove comments from.
+ */
+void remove_comment(char *buffer)
+{
+char *comment = strchr(buffer, '#');
+if (comment != NULL)
+{
+*comment = '\0';
 }
 }
