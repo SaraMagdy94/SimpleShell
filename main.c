@@ -65,12 +65,20 @@ else if (strncmp(buffer, "setenv ", 7) == 0)
 char *var_st = strstr(buffer, " ") + 1;
 char *var_end = strstr(var_st, " ") - 1;
 char *val_st = var_end + 2;
+
 if (var_st != NULL && var_end != NULL && val_st != NULL)
 *var_end = '\0';
+
 if (setenv(var_st, val_st, 1) != 0)
-fprintf(stderr, "Error setting environment variable.\n");
+{
+char error_message[] = "Error setting environment variable.\n";
+write(STDERR_FILENO, error_message, strlen(error_message));
+}
 else
-fprintf(stderr, "Usage: setenv VARIABLE VALUE\n");
+{
+char usage_message[] = "Usage: setenv VARIABLE VALUE\n";
+write(STDERR_FILENO, usage_message, strlen(usage_message));
+}
 }
 else if (strncmp(buffer, "unsetenv ", 9) == 0)
 {
@@ -78,10 +86,16 @@ char *var = buffer + 9;
 if (var != NULL)
 {
 if (unsetenv(var) != 0)
-fprintf(stderr, "Error unsetting environment variable.\n");
+{
+char error_message[] = "Error unsetting environment variable.\n";
+write(STDERR_FILENO, error_message, strlen(error_message));
+}
 }
 else
-fprintf(stderr, "Usage: unsetenv VARIABLE\n");
+{
+char usage_message[] = "Usage: unsetenv VARIABLE\n";
+write(STDERR_FILENO, usage_message, strlen(usage_message));
+}
 }
 else if (strncmp(buffer, "cd ", 3) == 0 || strcmp(buffer, "cd") == 0)
 {
@@ -98,7 +112,11 @@ c_dir = getcwd(NULL, 0);
 if (c_dir)
 {
 if (chdir(dir) != 0)
-fprintf(stderr, "cd: no such file or directory: %s\n", dir);
+{
+char error_message[BUFFER_SIZE];
+sprintf(error_message, "cd: no such file or directory: %s\n", dir);
+write(STDERR_FILENO, error_message, strlen(error_message));
+}
 else
 {
 setenv("OLDPWD", c_dir, 1);
@@ -109,7 +127,9 @@ free(n_dir);
 }
 }
 else
+{
 perror("getcwd");
+}
 }
 else if (strcmp(buffer, "env") == 0)
 {
