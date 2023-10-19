@@ -19,4 +19,5 @@ void execute(char *a[]);
 void execute_commands_interactive(char *commands[]);
 void execute_commands(char *commands[]);
 void remove_comment(char *buffer);
+
 #endif /* MAIN_H */
